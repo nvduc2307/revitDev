@@ -1,0 +1,911 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Nice3point.Revit.Toolkit</name>
+    </assembly>
+    <members>
+        <member name="T:Nice3point.Revit.Toolkit.Decorators.DockablePaneProvider">
+            <summary>
+                Provides access to create a new dockable pane to the Revit user interface
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Decorators.DockablePaneProvider.SetupDockablePane(Autodesk.Revit.UI.DockablePaneProviderData)">
+            <summary>
+                Method called during initialization of the user interface to gather information about a dockable pane window
+            </summary>
+            <param name="data">Container for information about the new dockable pane</param>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Decorators.DockablePaneProvider.Register(Autodesk.Revit.UI.UIControlledApplication)">
+            <summary>
+                Creates a new <see cref="T:Autodesk.Revit.UI.IDockablePaneProvider" /> instance
+            </summary>
+            <param name="application">The UIControlledApplication</param>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Decorators.DockablePaneProvider.Register(Autodesk.Revit.UI.UIControlledApplication,System.Guid,System.String)">
+            <summary>
+                Creates a new <see cref="T:Autodesk.Revit.UI.IDockablePaneProvider" /> instance
+            </summary>
+            <param name="application">The UIControlledApplication</param>
+            <param name="id">Unique identifier for the new pane</param>
+            <param name="title">String to use for the pane caption</param>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Decorators.DockablePaneProvider.Register(Autodesk.Revit.UI.UIControlledApplication,Autodesk.Revit.UI.DockablePaneId,System.String)">
+            <summary>
+                Creates a new <see cref="T:Autodesk.Revit.UI.IDockablePaneProvider" /> instance
+            </summary>
+            <param name="application">The UIControlledApplication</param>
+            <param name="id">Unique identifier for the new pane</param>
+            <param name="title">String to use for the pane caption</param>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Decorators.IDockablePaneProviderTitle">
+            <summary>
+                Interface for the data passed to the <see cref="M:Autodesk.Revit.UI.UIControlledApplication.RegisterDockablePane(Autodesk.Revit.UI.DockablePaneId,System.String,Autodesk.Revit.UI.IDockablePaneProvider)" /> method
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Decorators.IDockablePaneProviderTitle.SetTitle(System.String)">
+            <summary>
+                Sets the title of the dockable pane
+            </summary>
+            <param name="title">String to use for the pane caption</param>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Decorators.IDockablePaneProviderId">
+            <summary>
+                Interface for the data passed to the <see cref="M:Autodesk.Revit.UI.UIControlledApplication.RegisterDockablePane(Autodesk.Revit.UI.DockablePaneId,System.String,Autodesk.Revit.UI.IDockablePaneProvider)" /> method
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Decorators.IDockablePaneProviderId.SetId(System.Guid)">
+            <summary>
+                Sets the Id of the dockable pane
+            </summary>
+            <param name="id">Unique identifier for the new pane</param>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Decorators.IDockablePaneProviderId.SetId(Autodesk.Revit.UI.DockablePaneId)">
+            <summary>
+                Sets the Id of the dockable pane
+            </summary>
+            <param name="id">Unique identifier for the new pane</param>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Decorators.IDockablePaneProviderConfiguration">
+            <summary>
+                Interface that the Revit UI will call during initialization of the user interface to gather information about add-in dockable pane windows
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Decorators.IDockablePaneProviderConfiguration.SetConfiguration(System.Action{Autodesk.Revit.UI.DockablePaneProviderData})">
+            <summary>
+                Sets the configuration of the dockable pane
+            </summary>
+            <param name="handler">
+                DockablePaneProviderData handler<br />
+                data - Container for information about the new dockable pane. Implementers should set the
+                FrameworkElement and InitialState Properties. Optionally, providers can set the
+                ContextualHelp property if they wish to provide or react to help requests on the pane,
+                or override the default EditorInteraction property by setting it here.
+            </param>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.External.ExternalApplication">
+            <summary>Class that supports addition of external applications to Revit. Is the entry point when loading an external application</summary>
+            <remarks>
+                External applications are permitted to customize the Revit UI, and to add events and updaters to the session
+            </remarks>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.External.ExternalApplication.Result">
+            <summary>
+                Indicates if the external application completes its work successfully.
+            </summary>
+            <remarks>
+                Method <see cref="M:Nice3point.Revit.Toolkit.External.ExternalApplication.OnShutdown" /> will not be executed if the value of this property is different from <see cref="F:Autodesk.Revit.UI.Result.Succeeded" />
+            </remarks>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.External.ExternalApplication.Application">
+            <summary>
+                Reference to the <see cref="T:Autodesk.Revit.UI.UIControlledApplication" /> that is needed by an external application
+            </summary>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.External.ExternalApplication.UiApplication">
+            <summary>
+                Reference to the <see cref="T:Autodesk.Revit.UI.UIApplication" /> that is needed by an external application
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalApplication.OnStartup(Autodesk.Revit.UI.UIControlledApplication)">
+            <summary>Implement this method to execute some tasks when Autodesk Revit starts</summary>
+            <param name="application">A handle to the application being started</param>
+            <returns>Indicates if the external application completes its work successfully</returns>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalApplication.OnShutdown(Autodesk.Revit.UI.UIControlledApplication)">
+            <summary>Implement this method to execute some tasks when Autodesk Revit shuts down</summary>
+            <param name="application">A handle to the application being shut down</param>
+            <returns>Indicates if the external application completes its work successfully</returns>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalApplication.OnStartup">
+            <summary>
+                Overload this method to execute some tasks when Revit starts
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalApplication.OnShutdown">
+            <summary>
+                Overload this method to execute some tasks when Revit shuts down
+            </summary>
+            <remarks>
+                The method will not be executed if the value of the <see cref="P:Nice3point.Revit.Toolkit.External.ExternalApplication.Result" /> property in the <see cref="M:Nice3point.Revit.Toolkit.External.ExternalApplication.OnStartup" />
+                method is different from <see cref="F:Autodesk.Revit.UI.Result.Succeeded" />
+            </remarks>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.External.ExternalCommand">
+            <summary>
+                Implementation for a Revit add-in External Command
+            </summary>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.External.ExternalCommand.ElementSet">
+            <summary>
+                Element set indicating problem elements to display in the failure dialog. This will be used only if the command status was "Failed".
+            </summary>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.External.ExternalCommand.ExternalCommandData">
+            <summary>
+                Reference to the <see cref="T:Autodesk.Revit.UI.ExternalCommandData" /> that is needed by an external command
+            </summary>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.External.ExternalCommand.UiApplication">
+            <summary>
+                Reference to the <see cref="T:Autodesk.Revit.UI.UIApplication" /> that is needed by an external command
+            </summary>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.External.ExternalCommand.Application">
+            <summary>
+                Reference to the <see cref="T:Autodesk.Revit.ApplicationServices.Application" /> that is needed by an external command
+            </summary>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.External.ExternalCommand.UiDocument">
+            <summary>
+                Reference to the <see cref="T:Autodesk.Revit.UI.UIDocument" /> that is needed by an external command
+            </summary>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.External.ExternalCommand.Document">
+            <summary>
+                Reference to the <see cref="T:Autodesk.Revit.DB.Document" /> that is needed by an external command
+            </summary>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.External.ExternalCommand.ActiveView">
+            <summary>
+                Reference to the <see cref="P:Autodesk.Revit.UI.UIDocument.ActiveView" /> that is needed by an external command
+            </summary>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.External.ExternalCommand.Result">
+            <summary>
+                Informs Autodesk Revit of the status of your application after execution.
+            </summary>
+            <remarks>
+                The result indicates if the execution fails, succeeds, or was canceled by user. If it does not
+                succeed, Revit will undo any changes made by the external command
+            </remarks>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.External.ExternalCommand.ErrorMessage">
+            <summary>
+                Error message can be returned by external command. This will be displayed only if the command status was "Failed" <br />
+                There is a limit of 1023 characters for this message; strings longer than this will be truncated.
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalCommand.Execute(Autodesk.Revit.UI.ExternalCommandData,System.String@,Autodesk.Revit.DB.ElementSet)">
+            <summary>Override this method to implement and external command within Revit.</summary>
+            <returns>
+                The result indicates if the execution fails, succeeds, or was canceled by user. If it does not
+                succeed, Revit will undo any changes made by the external command.
+            </returns>
+            <param name="commandData">
+                An ExternalCommandData object which contains reference to Application and View
+                needed by external command.
+            </param>
+            <param name="message">
+                Error message can be returned by external command. This will be displayed only if the command status
+                was "Failed".  There is a limit of 1023 characters for this message; strings longer than this will be truncated.
+            </param>
+            <param name="elements">
+                Element set indicating problem elements to display in the failure dialog.  This will be used
+                only if the command status was "Failed".
+            </param>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalCommand.Execute">
+            <summary>
+                Overload this method to implement and external command within Revit
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalCommand.SuppressExceptions">
+            <summary>
+                Suppresses exceptions in external command
+            </summary>
+            <remarks>Does not affect the output of the ErrorMessage</remarks>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalCommand.SuppressExceptions(System.Action{System.Exception})">
+            <summary>
+                Suppresses exceptions in external command
+            </summary>
+            <remarks>Does not affect the output of the ErrorMessage</remarks>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalCommand.SuppressFailures">
+            <summary>
+                Suppresses failures in external command
+            </summary>
+            <remarks>Deletes all FailureMessages of severity "Warning"</remarks>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalCommand.SuppressDialogs(System.Int32)">
+            <summary>
+                Suppresses the display of dialog box or a message box
+            </summary>
+            <param name="result">The result code you wish the Revit dialog to return</param>
+            <remarks>
+                The range of valid result values depends on the type of dialog as follows:
+                <list type="number">
+                    <item>
+                        DialogBox: Any non-zero value will cause a dialog to be dismissed.
+                    </item>
+                    <item>
+                        MessageBox: Standard Message Box IDs, such as IDOK and IDCANCEL, are accepted.
+                        For all possible IDs, refer to the Windows API documentation.
+                        The ID used must be relevant to the buttons in a message box.
+                    </item>
+                    <item>
+                        TaskDialog: Standard Message Box IDs and Revit Custom IDs are accepted,
+                        depending on the buttons used in a dialog. Standard buttons, such as OK
+                        and Cancel, have standard IDs described in Windows API documentation.
+                        Buttons with custom text have custom IDs with incremental values
+                        starting at 1001 for the left-most or top-most button in a task dialog.
+                    </item>
+                </list>
+            </remarks>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalCommand.SuppressDialogs(System.Action{Autodesk.Revit.UI.Events.DialogBoxShowingEventArgs})">
+            <summary>
+                Suppresses the display of dialog box or a message box
+            </summary>
+            <param name="handler">Dialog handler</param>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalCommand.RestoreDialogs">
+            <summary>
+                Restores display of dialog box or a message box
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalCommand.RestoreFailures">
+            <summary>
+                Restores failure handling
+            </summary>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.External.ExternalDBApplication">
+            <summary>Class that supports addition of external applications to Revit. Is the entry point when loading an external application</summary>
+            <remarks>
+                External applications are permitted to customize the Revit UI, and to add events and updaters to the session
+            </remarks>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.External.ExternalDBApplication.Result">
+            <summary>
+                Indicates if the external application completes its work successfully.
+            </summary>
+            <remarks>
+                Method <see cref="M:Nice3point.Revit.Toolkit.External.ExternalDBApplication.OnShutdown" /> will not be executed if the value of this property is different from <see cref="F:Autodesk.Revit.DB.ExternalDBApplicationResult.Succeeded" />
+            </remarks>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.External.ExternalDBApplication.Application">
+            <summary>
+                Reference to the <see cref="T:Autodesk.Revit.ApplicationServices.ControlledApplication" /> that is needed by an external application
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalDBApplication.OnStartup(Autodesk.Revit.ApplicationServices.ControlledApplication)">
+            <summary>Implement this method to execute some tasks when Autodesk Revit starts</summary>
+            <param name="application">A handle to the application being started</param>
+            <returns>Indicates if the external application completes its work successfully</returns>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalDBApplication.OnShutdown(Autodesk.Revit.ApplicationServices.ControlledApplication)">
+            <summary>Implement this method to execute some tasks when Autodesk Revit shuts down</summary>
+            <param name="application">A handle to the application being shut down</param>
+            <returns>Indicates if the external application completes its work successfully</returns>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalDBApplication.OnStartup">
+            <summary>
+                Overload this method to execute some tasks when Revit starts
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalDBApplication.OnShutdown">
+            <summary>
+                Overload this method to execute some tasks when Revit shuts down
+            </summary>
+            <remarks>
+                The method will not be executed if the value of the <see cref="P:Nice3point.Revit.Toolkit.External.ExternalDBApplication.Result" /> property in the <see cref="M:Nice3point.Revit.Toolkit.External.ExternalDBApplication.OnStartup" />
+                method is different from <see cref="F:Autodesk.Revit.DB.ExternalDBApplicationResult.Succeeded" />
+            </remarks>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.External.ExternalEventHandler">
+            <summary>
+                External event used to change the document.
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalEventHandler.#ctor">
+            <summary>
+                Creates an instance of external event
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalEventHandler.Execute(Autodesk.Revit.UI.UIApplication)">
+            <summary>
+                This method is called to handle the external event
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalEventHandler.GetName">
+            <summary>
+                String identification of the event handler
+            </summary>
+            <returns>Event name</returns>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.ExternalEventHandler.Raise">
+            <summary>
+                Instructing Revit to raise (signal) the external event
+            </summary>
+            <remarks>
+                Revit will wait until it is ready to process the event and then
+                it will execute its event handler by calling the Execute method.
+                Revit processes external events only when no other commands or
+                edit modes are currently active in Revit, which is the same policy
+                like the one that applies to evoking external commands
+            </remarks>
+            <returns>
+                The result of event raising request. If the request is 'Accepted',
+                the event would be added to the event queue and its handler will
+                be executed in the next event-processing cycle
+            </returns>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.External.Handlers.ActionEventHandler">
+            <summary>
+                Handler, to provide access to change the Revit document with the ability to queue calls to Raise methods
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.Handlers.ActionEventHandler.Execute(Autodesk.Revit.UI.UIApplication)">
+            <summary>
+                This method is called to handle the external event
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.Handlers.ActionEventHandler.Raise(System.Action{Autodesk.Revit.UI.UIApplication})">
+            <summary>
+                Instructing Revit to queue a handler and raise (signal) the external event
+            </summary>
+            <remarks>
+                Revit will wait until it is ready to process the event and then
+                it will execute its event handler by calling the Execute method.
+                Revit processes external events only when no other commands or
+                edit modes are currently active in Revit, which is the same policy
+                like the one that applies to evoking external commands
+            </remarks>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.Handlers.ActionEventHandler.Cancel">
+            <summary>
+                Clears the call queue of subscribed delegates
+            </summary>
+            <remarks>The queue can be cleaned up before the first delegate is invoked</remarks>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.External.Handlers.AsyncEventHandler">
+            <summary>
+                Handler, to provide access to change the Revit document
+            </summary>
+            <remarks>Suitable for cases where it is needed to await the completion of an external event</remarks>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.Handlers.AsyncEventHandler.Execute(Autodesk.Revit.UI.UIApplication)">
+            <summary>
+                This method is called to handle the external event
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.Handlers.AsyncEventHandler.RaiseAsync(System.Action{Autodesk.Revit.UI.UIApplication})">
+            <summary>
+                Instructing Revit to queue a handler, raise (signal) the external event and async awaiting for its completion
+            </summary>
+            <remarks>
+                This method async awaiting completion of the <see cref="M:Nice3point.Revit.Toolkit.External.Handlers.AsyncEventHandler.Execute(Autodesk.Revit.UI.UIApplication)" /> method. <br />
+                Exceptions in the delegate will not be ignored and will be rethrown in the original synchronization context.<br />
+                Use <see langword="await" /> to awaiting.
+                <see cref="M:System.Threading.Tasks.Task.WaitAll(System.Threading.Tasks.Task[])" />, <see cref="M:System.Threading.Tasks.Task.Wait" /> will cause a deadlock.
+            </remarks>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.External.Handlers.AsyncEventHandler`1">
+            <summary>
+                Handler, to provide access to change the Revit document
+            </summary>
+            <remarks>Suitable for cases where it is needed to await the completion of an external event with the return of a value</remarks>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.Handlers.AsyncEventHandler`1.Execute(Autodesk.Revit.UI.UIApplication)">
+            <summary>
+                This method is called to handle the external event
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.Handlers.AsyncEventHandler`1.RaiseAsync(System.Func{Autodesk.Revit.UI.UIApplication,`0})">
+            <summary>
+                Instructing Revit to queue a handler, raise (signal) the external event and async awaiting for its completion
+            </summary>
+            <returns>
+                The return value of the method that delegate encapsulates
+            </returns>
+            <remarks>
+                This method async awaiting completion of the <see cref="M:Nice3point.Revit.Toolkit.External.Handlers.AsyncEventHandler.Execute(Autodesk.Revit.UI.UIApplication)" /> method. <br />
+                Exceptions in the delegate will not be ignored and will be rethrown in the original synchronization context.<br />
+                Use <see langword="await" /> to awaiting.
+                <see cref="M:System.Threading.Tasks.Task.WaitAll(System.Threading.Tasks.Task[])" />, <see cref="M:System.Threading.Tasks.Task.Wait" /> will cause a deadlock.
+            </remarks>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.External.Handlers.IdlingEventHandler">
+            <summary>
+                Handler, to provide access to change the Revit document with the ability to queue calls to Raise methods. <br />
+                Delegates will be invoked when UIApplication.Idling occurs
+            </summary>
+            <remarks>
+                Unsubscribing from the Idling event occurs immediately. <br />
+                Suitable for cases where you need to call code when Revit receives focus or to open a dialog after loading a family into the project
+            </remarks>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.Handlers.IdlingEventHandler.Execute(Autodesk.Revit.UI.UIApplication)">
+            <summary>
+                This method is called to handle the external event
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.Handlers.IdlingEventHandler.Raise(System.Action{Autodesk.Revit.UI.UIApplication})">
+            <summary>
+                Instructing Revit to queue a handler and raise (signal) the external event
+            </summary>
+            <remarks>
+                Revit will wait until it is ready to process the event and then
+                it will execute its event handler by calling the Execute method.
+                Revit processes external events only when no other commands or
+                edit modes are currently active in Revit, which is the same policy
+                like the one that applies to evoking external commands
+            </remarks>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.External.Handlers.IdlingEventHandler.Cancel">
+            <summary>
+                Clears the call queue of subscribed delegates
+            </summary>
+            <remarks>The queue can be cleaned up before the first delegate is invoked</remarks>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Helpers.ResolveHelper">
+            <summary>
+                Provides handlers to resolve dependencies
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Helpers.ResolveHelper.ResolveAssembly(System.Object,System.ResolveEventArgs)">
+            <summary>
+                Represents a method that handles the <see cref="E:System.AppDomain.AssemblyResolve" /> event of an <see cref="T:System.AppDomain" />
+            </summary>
+            <param name="sender">The source of the event</param>
+            <param name="args">The event data</param>
+            <returns>The assembly that resolves the type, assembly, or resource; or <see langword="null" /> if the assembly cannot be resolved</returns>
+            <remarks>
+                Optimized assembly resolver is enabled by default for
+                <see cref="T:Nice3point.Revit.Toolkit.External.ExternalApplication" /> and <see cref="T:Nice3point.Revit.Toolkit.External.ExternalCommand" />
+            </remarks>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Options.DuplicateTypeNamesHandler">
+            <summary>
+                A class for custom handlers of duplicate type names encountered during a paste operation. When the destination document
+                contains types that have the same names as the types being copied, but different internals, a decision must be made on how to proceed - whether to
+                cancel the operation or continue, but only copy types with unique names.
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.DuplicateTypeNamesHandler.#ctor">
+            <summary>
+                Creates a new handler with <see cref="F:Autodesk.Revit.DB.DuplicateTypeAction.UseDestinationTypes" /> by default
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.DuplicateTypeNamesHandler.#ctor(Autodesk.Revit.DB.DuplicateTypeAction)">
+            <summary>
+                Creates a new handler
+            </summary>
+            <param name="action">A structure that provides information about an attempt to copy types with names that already exist in the destination document</param>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.DuplicateTypeNamesHandler.#ctor(System.Func{Autodesk.Revit.DB.DuplicateTypeAction})">
+            <summary>
+                Creates a new handler
+            </summary>
+            <param name="actionHandler">
+                Encapsulates a method on a structure that provides information about an attempt to copy types with names that already exist in the destination document
+            </param>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.DuplicateTypeNamesHandler.OnDuplicateTypeNamesFound(Autodesk.Revit.DB.DuplicateTypeNamesHandlerArgs)">
+            <summary>
+                Called when the destination document contains types with the same names as the types being copied
+            </summary>
+            <param name="args">The information about the types with duplicate names</param>
+            <returns>
+                The action to be taken: copy only types with unique names or cancel the operation
+            </returns>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Options.FamilyLoadOptions">
+            <summary>
+                A class which provide the callback for family load options.
+            </summary>
+            <example>
+                <code>
+                    document.LoadFamily(fileName, new FamilyLoadOptions(), out var family);
+                    document.LoadFamily(fileName, UIDocument.GetRevitUIFamilyLoadOptions(), out var family);
+                </code>
+            </example>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.FamilyLoadOptions.#ctor">
+            <summary>
+                Return the option object that allows families to be loaded
+            </summary>
+            <remarks>Overwrites parameter values of existing types</remarks>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.FamilyLoadOptions.#ctor(System.Boolean)">
+            <summary>
+                Return the option object that allows families to be loaded
+            </summary>
+            <param name="overwrite">This determines whether or not to overwrite the parameter values of existing types</param>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.FamilyLoadOptions.#ctor(System.Boolean,Autodesk.Revit.DB.FamilySource)">
+            <summary>
+                Return the option object that allows families to be loaded
+            </summary>
+            <param name="overwrite">This determines whether or not to overwrite the parameter values of existing types</param>
+            <param name="familySource">This indicates if the family will load from the project or the current family</param>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.FamilyLoadOptions.OnFamilyFound(System.Boolean,System.Boolean@)">
+            <summary>A method called when the family was found in the target document</summary>
+            <remarks>Triggered only when the family is both loaded and changed</remarks>
+            <param name="familyInUse">
+                Indicates if one or more instances of the family is placed in the project
+            </param>
+            <param name="overwriteParameterValues">
+                This determines whether or not to overwrite the parameter values of existing types. The default value is false
+            </param>
+            <returns>Return true to continue loading the family, false to cancel</returns>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.FamilyLoadOptions.OnSharedFamilyFound(Autodesk.Revit.DB.Family,System.Boolean,Autodesk.Revit.DB.FamilySource@,System.Boolean@)">
+            <summary>A method called when the shared family was found in the target document</summary>
+            <remarks>Triggered only when the family is both loaded and changed</remarks>
+            <param name="sharedFamily">The shared family in the current family document</param>
+            <param name="familyInUse">
+                Indicates if one or more instances of the family is placed in the project
+            </param>
+            <param name="source">
+                This indicates if the family will load from the project or the current family
+            </param>
+            <param name="overwriteParameterValues">
+                This indicates whether or not to overwrite the parameter values of existing types
+            </param>
+            <returns>Return true to continue loading the family, false to cancel</returns>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Options.SaveSharedCoordinatesCallback">
+            <summary>
+               Callback that may be used to control Revit when trying to unload or reload a Revit link with changes in shared coordinates
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.SaveSharedCoordinatesCallback.#ctor">
+            <summary>
+                Creates a new callback with <see cref="F:Autodesk.Revit.DB.SaveModifiedLinksOptions.SaveLinks" /> by default
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.SaveSharedCoordinatesCallback.#ctor(Autodesk.Revit.DB.SaveModifiedLinksOptions)">
+            <summary>
+                Creates a new callback
+            </summary>
+            <param name="options">The options when saving a linked file which has been modified in-memory by shared coordinates operations</param>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.SaveSharedCoordinatesCallback.#ctor(System.Func{Autodesk.Revit.DB.RevitLinkType,Autodesk.Revit.DB.SaveModifiedLinksOptions})">
+            <summary>
+                Creates a new callback
+            </summary>
+            <param name="handler">Encapsulates a method for options when saving a linked file which has been modified in-memory by shared coordinates operations</param>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.SaveSharedCoordinatesCallback.GetSaveModifiedLinksOption(Autodesk.Revit.DB.RevitLinkType)">
+            <summary>
+               Determines whether Revit should save the link, not save the link, or discard shared positioning entirely
+            </summary>
+            <param name="link">The Revit link which has modified shared coordinates</param>
+            <returns>
+               The options when saving a linked file which has been modified in-memory by shared coordinates operations
+            </returns>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Options.SelectionConfiguration">
+            <summary>
+                Configuration for creating <see cref="T:Autodesk.Revit.UI.Selection.ISelectionFilter" /> instances
+            </summary>
+            <example>
+                <code>
+                    var selectionConfiguration = new SelectionConfiguration()
+                        .Allow.Element(element => element.Category.Id.AreEquals(BuiltInCategory.OST_Walls))
+                        .Allow.Reference((reference, xyz) => false);
+                        
+                    uiDocument.Selection.PickObject(ObjectType.Element, selectionConfiguration.Filter);
+                </code>
+            </example>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.SelectionConfiguration.#ctor">
+            <summary>
+                Construct a <see cref="T:Nice3point.Revit.Toolkit.Options.SelectionConfiguration" />
+            </summary>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.Options.SelectionConfiguration.Filter">
+            <summary>
+                Object filter for selection operation
+            </summary>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.Options.SelectionConfiguration.Allow">
+            <summary>
+                Configures allowed filters for object selection
+            </summary>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Options.ISelectionFilterConfiguration">
+            <summary>
+                An interface that provides the ability to filter objects during a selection operation
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.ISelectionFilterConfiguration.Element(System.Func{Autodesk.Revit.DB.Element,System.Boolean})">
+            <summary>
+                Handler indicating if a reference to a piece of geometry should be permitted to be selected
+            </summary>
+            <param name="elementHandler">
+                Selection handler<br />
+                element – A candidate element in selection operation
+            </param>
+            <returns>Return true to allow the user to select this candidate element. Return false to prevent selection of this element</returns>
+            <remarks>
+                If prompting the user to select an element from a Revit Link instance, the element passed here will be the link instance, not the selected linked element <br />
+                If an exception is thrown from this method, the element will not be permitted to be selected
+            </remarks>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Options.ISelectionFilterConfiguration.Reference(System.Func{Autodesk.Revit.DB.Reference,Autodesk.Revit.DB.XYZ,System.Boolean})">
+            <summary>
+                Handler indicating if the element should be permitted to be selected
+            </summary>
+            <param name="referenceHandler">
+                Selection handler<br />
+                reference – A candidate reference in selection operation<br />
+                position – The 3D position of the mouse on the candidate reference
+            </param>
+            <returns>
+                Return true to allow the user to select this candidate reference. Return false to prevent selection of this candidate <br />
+                If an exception is thrown from this method, the element will not be permitted to be selected
+            </returns>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Utils.TransactionManager">
+            <summary>
+                Provides control over transactions
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.TransactionManager.Modify(Autodesk.Revit.DB.Document)">
+            <summary>
+                Initializes document modification
+            </summary>
+            <param name="document">The document to be modified</param>
+            <remarks> The transaction name has already been declared in the implementation, to override, use the <see cref="M:Nice3point.Revit.Toolkit.Utils.ITransactionSettings.SetName(System.String)" /> method</remarks>
+            <returns>New <see cref="T:Nice3point.Revit.Toolkit.Utils.ITransaction" /> object</returns>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.TransactionManager.Modify(Autodesk.Revit.DB.Document,System.Func{Nice3point.Revit.Toolkit.Utils.IDocumentTransactionSettings,Nice3point.Revit.Toolkit.Utils.ITransactionSettings})">
+            <summary>
+                Initializes document modification
+            </summary>
+            <param name="document">The document to be modified</param>
+            <param name="settings"><see cref="T:Nice3point.Revit.Toolkit.Utils.ITransactionSettings" /> instance</param>
+            <remarks> The transaction name has already been declared in the implementation, to override, use the <see cref="M:Nice3point.Revit.Toolkit.Utils.ITransactionSettings.SetName(System.String)" /> method</remarks>
+            <returns>New <see cref="T:Nice3point.Revit.Toolkit.Utils.ITransaction" /> object</returns>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.TransactionManager.Modify(Autodesk.Revit.DB.Document,System.Func{Nice3point.Revit.Toolkit.Utils.IDocumentTransactionSettings,Nice3point.Revit.Toolkit.Utils.ISubTransactionSettings})">
+            <summary>
+                Initializes document modification
+            </summary>
+            <param name="document">The document to be modified</param>
+            <param name="settings"><see cref="T:Nice3point.Revit.Toolkit.Utils.ISubTransactionSettings" /> instance</param>
+            <remarks>SubTransaction does not provide customization settings</remarks>
+            <returns>New <see cref="T:Nice3point.Revit.Toolkit.Utils.ISubTransaction" /> object</returns>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.TransactionManager.Modify(Autodesk.Revit.DB.Document,System.Func{Nice3point.Revit.Toolkit.Utils.IDocumentTransactionSettings,Nice3point.Revit.Toolkit.Utils.IGroupTransactionSettings})">
+            <summary>
+                Initializes document modification
+            </summary>
+            <param name="document">The document to be modified</param>
+            <param name="settings"><see cref="T:Nice3point.Revit.Toolkit.Utils.IGroupTransactionSettings" /> instance</param>
+            <remarks> The group transaction name has already been declared in the implementation, to override, use the <see cref="M:Nice3point.Revit.Toolkit.Utils.IGroupTransactionSettings.SetName(System.String)" /> method</remarks>
+            <returns>New <see cref="T:Nice3point.Revit.Toolkit.Utils.IGroupTransaction" /> object</returns>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Utils.IDocumentTransactionSettings">
+            <summary>
+                Contains settings for modifying the document
+            </summary>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.Utils.IDocumentTransactionSettings.Transaction">
+            <summary>
+                Provides access for <see cref="T:Nice3point.Revit.Toolkit.Utils.ITransactionSettings" />
+            </summary>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.Utils.IDocumentTransactionSettings.SubTransaction">
+            <summary>
+                Provides access for <see cref="T:Nice3point.Revit.Toolkit.Utils.ISubTransactionSettings" />
+            </summary>
+        </member>
+        <member name="P:Nice3point.Revit.Toolkit.Utils.IDocumentTransactionSettings.GroupTransaction">
+            <summary>
+                Provides access for <see cref="T:Nice3point.Revit.Toolkit.Utils.IGroupTransactionSettings" />
+            </summary>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Utils.ITransactionSettings">
+            <summary>
+                Contains settings that will be applied before the <see cref="T:Nice3point.Revit.Toolkit.Utils.ITransaction" /> starts
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.ITransactionSettings.SetName(System.String)">
+            <summary>Sets the transaction name</summary>
+            <remarks>
+                The name will later appear in the Undo menu in Revit after a transaction is successfully committed
+            </remarks>
+            <param name="name">A name for the transaction</param>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.ITransactionSettings.DisableModalHandling">
+            <summary>
+                Disable the display of a modal (blocking) error dialog if the transaction failed to finish
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.ITransactionSettings.EnableClearAfterRollback">
+            <summary>
+                Clear all posted failures silently when the failing transaction is being rolled back intentionally <br />
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.ITransactionSettings.EnableDelayedMiniWarnings">
+            <summary>
+                Delay the display of the mini-warning dialog (if one is to be shown as a result of warnings in the current transaction) until the end of the next transaction
+            </summary>
+            <remarks>
+                This controls warnings suitable for the mini-warnings dialog only<br />
+                If <see cref="M:Nice3point.Revit.Toolkit.Utils.ITransactionSettings.DisableModalHandling" /> was not applied, the method call will be ignored
+            </remarks>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Utils.ISubTransactionSettings">
+            <summary>
+                Contains settings that will be applied before the <see cref="T:Nice3point.Revit.Toolkit.Utils.ISubTransaction" /> starts
+            </summary>
+            <remarks>SubTransaction does not provide customization settings</remarks>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Utils.IGroupTransactionSettings">
+            <summary>
+                Contains settings that will be applied before the <see cref="T:Nice3point.Revit.Toolkit.Utils.IGroupTransaction" /> starts
+            </summary>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.IGroupTransactionSettings.SetName(System.String)">
+            <summary>Sets the transaction group's name</summary>
+            <remarks>
+                Transaction group only needs a name if it is going to be assimilated at the end.
+            </remarks>
+            <param name="name">A name for the transaction group</param>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.IGroupTransactionSettings.DisableModalHandling">
+            <summary>
+                Forces all transactions finished inside this group to disable modal failure handling regardless of what failure handling options are set for those transactions
+            </summary>
+            <remarks>This method is ignored during events, when failure handling is always modal</remarks>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Utils.ITransaction">
+            <summary>
+                Provides a mechanism for managing transactions
+            </summary>
+            <remarks>
+                Transactions are context-like objects that guard any changes made to a Revit model<br />
+                A document can have only one transaction open at any given time<br />
+                Transactions cannot be started when the document is in read-only mode, either permanently or temporarily.
+                See the Document class methods IsReadOnly and IsModifiable for more details<br />
+                Transactions in linked documents are not permitted, for linked documents are not allowed to be modified
+            </remarks>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.ITransaction.Commit(System.Action{Autodesk.Revit.DB.Document,Autodesk.Revit.DB.Transaction})">
+            <summary>Commits all changes made to the model during the transaction</summary>
+            <remarks>
+                By committing a transaction, all changes made to the model during the transaction
+                are accepted. A new undo item will appear in the Undo menu in Revit, which allows
+                the user to undo the changes. The undo item will have this transaction's name.
+                Be aware that committing may fail or can be delayed (as a result of failure handling.)
+            </remarks>
+            <exception cref="T:Autodesk.Revit.Exceptions.InvalidOperationException">
+                Document is a linked file. Transactions can only be used in primary documents (projects or families.) <br />
+                The transaction's document is currently in failure mode
+            </exception>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.ITransaction.RollBack(System.Action{Autodesk.Revit.DB.Document,Autodesk.Revit.DB.Transaction})">
+            <summary>Rolls back all changes made to the model during the transaction</summary>
+            <remarks>
+                By rolling back a transaction, all changes made to the model are discarded.
+                Be aware that rolling back may be delayed (as a result of failure handling.)
+            </remarks>
+            <exception cref="T:Autodesk.Revit.Exceptions.InvalidOperationException">
+                The transaction's document is currently in failure mode
+            </exception>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Utils.ISubTransaction">
+            <summary>
+                Provides a mechanism for managing sub-transactions
+            </summary>
+            <remarks>
+                Sub-transactions are objects that provide control over a subset of changes in a document<br />
+                A Sub-transaction can only be active as a part of an open transaction<br />
+                Sub-transactions may be nested inside each other, but with the restriction that every nested
+                sub-transaction is entirely contained (opened and closed) in the parent sub-transaction
+            </remarks>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.ISubTransaction.Commit(System.Action{Autodesk.Revit.DB.Document,Autodesk.Revit.DB.SubTransaction})">
+            <summary>Commits all changes made to the model made during the sub-transaction</summary>
+            <remarks>
+                <p>
+                    The changes are not permanently committed to the document yet. They will be
+                    committed only when the active transaction is committed. If the transaction
+                    is rolled back instead, the changes committed during this sub-transaction will be discarded
+                </p>
+            </remarks>
+            <exception cref="T:Autodesk.Revit.Exceptions.InvalidOperationException">
+                A sub-transaction can only be active inside an open Transaction
+            </exception>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.ISubTransaction.RollBack(System.Action{Autodesk.Revit.DB.Document,Autodesk.Revit.DB.SubTransaction})">
+            <summary>Discards all changes made to the model during the sub-transaction</summary>
+            <remarks>
+                <p>
+                    The parent transaction (or a parent sub-transaction, if any)
+                    can still be committed, but the changes rolled back by this
+                    method will not be part of the committed transaction
+                </p>
+            </remarks>
+            <exception cref="T:Autodesk.Revit.Exceptions.InvalidOperationException">
+                A sub-transaction can only be active inside an open Transaction
+            </exception>
+        </member>
+        <member name="T:Nice3point.Revit.Toolkit.Utils.IGroupTransaction">
+            <summary>
+                Provides a mechanism for managing group transactions
+            </summary>
+            <remarks>
+                Transaction groups aggregate a number of transactions<br />
+                A transaction group can only be started when no transaction is active
+            </remarks>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.IGroupTransaction.Commit(System.Action{Autodesk.Revit.DB.Document,Autodesk.Revit.DB.TransactionGroup})">
+            <summary>
+                Commits the transaction group
+            </summary>
+            <remarks>
+                <p>Committing a group does not change the model. It only confirms the commitment of all inner groups and transactions</p>
+                <p>
+                    Commit can be called only when all inner transaction groups and transactions are finished,
+                    i.e. after they were either committed or rolled back. If there is still a transaction or an inner
+                    transaction group open, an attempt to commit this outer group will cause an exception
+                </p>
+            </remarks>
+            <exception cref="T:Autodesk.Revit.Exceptions.InvalidOperationException">
+                The transaction's document is currently in failure mode<br />
+                Transaction groups cannot be closed until failure handling is finished
+            </exception>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.IGroupTransaction.RollBack(System.Action{Autodesk.Revit.DB.Document,Autodesk.Revit.DB.TransactionGroup})">
+            <summary>
+                Rolls back the transaction group, which effectively undoes all transactions committed inside the group
+            </summary>
+            <remarks>
+                <p>
+                    RollBack can be called only when all inner transaction groups and transactions are finished,
+                    i.e. after they were either committed or rolled back
+                </p>
+            </remarks>
+            <exception cref="T:Autodesk.Revit.Exceptions.InvalidOperationException">
+                The transaction's document is currently in failure mode<br />
+                Transaction groups cannot be closed until failure handling is finished
+            </exception>
+        </member>
+        <member name="M:Nice3point.Revit.Toolkit.Utils.IGroupTransaction.Assimilate(System.Action{Autodesk.Revit.DB.Document,Autodesk.Revit.DB.TransactionGroup})">
+            <summary>
+                Assimilates all inner transactions by merging them into a single undo item
+            </summary>
+            <remarks>
+                <p>After a successful assimilation the transaction group is committed</p>
+                <p>
+                    All transactions committed inside this group will be merged into one
+                    single transaction. The resulting undo item will bear this group's name
+                </p>
+                <p>
+                    Assimilate can be called only when all inner transaction groups and transactions
+                    are finished, i.e. after they were either committed or rolled back
+                </p>
+            </remarks>
+            <exception cref="T:Autodesk.Revit.Exceptions.InvalidOperationException">
+                The transaction's document is currently in failure mode <br />
+                Transaction groups cannot be closed until failure handling is finished
+            </exception>
+        </member>
+    </members>
+</doc>
