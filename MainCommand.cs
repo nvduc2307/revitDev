@@ -16,25 +16,7 @@ namespace RevitDev
         public List<Element> Elements { get; set; }
         public override void Execute()
         {
-            try
-            {
-                AC.GetInformation(UiDocument);
-                PatchDocument.Start(
-                    AC.Application,
-                    AC.UiApplication, 
-                    RevitCommandId.LookupPostableCommandId(PostableCommand.ModelLine));
-                PatchDocument.OnPostableCommandModelLineEnded += OnPostableCommandModelLineEnded;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        private void OnPostableCommandModelLineEnded(object sender, EventArgs e)
-        {
-            MessageBox.Show(PatchDocument.ElemIds.Count.ToString());
-            PatchDocument.OnPostableCommandModelLineEnded -= OnPostableCommandModelLineEnded;
+            
         }
     }
 }
