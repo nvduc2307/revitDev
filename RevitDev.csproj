@@ -162,15 +162,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CurveInRevits\CurveInRevit.cs" />
+    <Compile Include="CurveInRevits\LineStyleInRevit.cs" />
     <Compile Include="EventInReVit\OverrideGraphics.cs" />
     <Compile Include="EventInReVit\RevitCommandEndedMonitor.cs" />
     <Compile Include="EventInReVit\PatchDocument.cs" />
     <Compile Include="EventInWindow\CanvasZoomPan.cs" />
     <Compile Include="EventInWindow\Press.cs" />
     <Compile Include="FamilyInRevits\FamilyInRevits.cs" />
+    <Compile Include="Logger\SchemaInfo.cs" />
+    <Compile Include="Logger\SchemaMethods.cs" />
     <Compile Include="MainCommand.cs" />
     <Compile Include="Messages\IO.cs" />
+    <Compile Include="PathInWindows\PathInWindow.cs" />
     <Compile Include="SelectionFilterInRevit\SelectionFilter.cs" />
+    <Compile Include="StringInWindow\TextFileMethods.cs" />
     <Compile Include="XYZInRevits\GeometrySupport.cs" />
     <Compile Include="XYZInRevits\XYZInRevit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
