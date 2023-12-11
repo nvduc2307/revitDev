@@ -174,8 +174,14 @@
     <Compile Include="MainCommand.cs" />
     <Compile Include="Messages\IO.cs" />
     <Compile Include="PathInWindows\PathInWindow.cs" />
+    <Compile Include="RebarInRevits\IRepositories\IRevRebarRepository.cs" />
+    <Compile Include="RebarInRevits\Models\RevRebar.cs" />
+    <Compile Include="RebarInRevits\Repositories\RevRebarRepository.cs" />
+    <Compile Include="RebarInRevits\Utils\UtilsRevRebar.cs" />
     <Compile Include="SelectionFilterInRevit\SelectionFilter.cs" />
     <Compile Include="StringInWindow\TextFileMethods.cs" />
+    <Compile Include="Utils\ElementInRevit.cs" />
+    <Compile Include="Utils\SkipWarning.cs" />
     <Compile Include="XYZInRevits\GeometrySupport.cs" />
     <Compile Include="XYZInRevits\XYZInRevit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
