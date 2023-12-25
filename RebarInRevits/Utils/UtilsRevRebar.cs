@@ -90,7 +90,7 @@ namespace RevitDev.RebarInRevits.Utils
             }
         }
 
-        public static int GetQTYRebar(this double length, double spacing, out double phandu)
+        public static int GetQtyRebar(this double length, double spacing, out double phandu)
         {
             phandu = length % spacing;
             var qty = length != 0
@@ -98,5 +98,6 @@ namespace RevitDev.RebarInRevits.Utils
                 : 0;
             return qty;
         }
+
     }
 }

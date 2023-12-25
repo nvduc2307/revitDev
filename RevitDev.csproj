@@ -182,6 +182,7 @@
     <Compile Include="StringInWindow\TextFileMethods.cs" />
     <Compile Include="Utils\ElementInRevit.cs" />
     <Compile Include="Utils\SkipWarning.cs" />
+    <Compile Include="XYZInRevits\FaceInRevit.cs" />
     <Compile Include="XYZInRevits\GeometrySupport.cs" />
     <Compile Include="XYZInRevits\XYZInRevit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

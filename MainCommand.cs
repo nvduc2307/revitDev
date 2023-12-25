@@ -1,13 +1,10 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
-using Autodesk.Revit.UI;
 using HcBimUtils.DocumentUtils;
 using Nice3point.Revit.Toolkit.External;
-using RevitDev.EventInReVit;
 using RevitDev.RebarInRevits.IRepositories;
-using System;
-using System.Collections.Generic;
-using System.Windows;
+using RevitDev.RebarInRevits.Models;
+using RevitDev.RebarInRevits.Repositories;
 
 namespace RevitDev
 {
@@ -17,7 +14,28 @@ namespace RevitDev
         private IRevRebarRepository IRevRebarRepository;
         public override void Execute()
         {
+            AC.GetInformation(UiDocument);
+            try
+            {
 
+                using (var ts = new TransactionGroup(AC.Document, "name transaction"))
+                {
+                    ts.Start();
+                    //--------
+                    var revRebar = new RevRebar()
+                    {
+
+                    };
+                    var revRebarRepository = new RevRebarRepository(AC.Document, revRebar);
+                    //--------
+                    ts.Commit();
+                }
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
             // test commit to origin main
             // first commit to origin develop
         }

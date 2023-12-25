@@ -1,5 +1,7 @@
 ﻿using Autodesk.Revit.DB;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RevitDev.XYZInRevits
 {
@@ -51,6 +53,33 @@ namespace RevitDev.XYZInRevits
                 r = true;
             }
             return r;
+        }
+
+        public static bool IsSeem(this XYZ p1, XYZ p2)
+        {
+            return (p1.X == p2.X && p1.Y == p2.Y && p1.Z == p2.Z);
+        }
+
+        public static List<Curve> GetCurves(this List<XYZ> points)
+        {
+            var pointsCount = points.Count;
+            var results = new List<Curve>();
+            if (pointsCount > 1)
+            {
+                for (int i = 0; i < pointsCount; i++)
+                {
+                    if (i == pointsCount - 1)
+                    {
+                        results.Add(Line.CreateBound(points[i], points[0]));
+
+                    }
+                    else
+                    {
+                        results.Add(Line.CreateBound(points[i], points[i + 1]));
+                    }
+                }
+            }
+            return results;
         }
     }
 }

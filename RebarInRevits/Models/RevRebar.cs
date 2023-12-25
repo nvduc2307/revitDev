@@ -24,7 +24,6 @@ namespace RevitDev.RebarInRevits.Models
         public RebarHookType StartHook { get; set; }
         public RebarHookType EndHook { get; set; }
         public XYZ Normal { get; set; }
-        public List<Curve> Polygon { get; set; }
         public RebarHookOrientation StartHookOrientation { get; set; }
         public RebarHookOrientation EndHookOrientation { get; set; }
         public bool IsUseExistingShapeIfPosible { get; set; }
