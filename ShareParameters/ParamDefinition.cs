@@ -21,28 +21,24 @@ namespace RevitDev.Utils.ShareParameters
           string name,
           BindingGroups group,
           InstType typeOrInstance,
-          SharedParamGroup groupInSharedParamsFile,
-          BuiltInParameterGroup paramGrp)
+          SharedParamGroup groupInSharedParamsFile)
         {
             ParameterName = name;
             BindingGroup = group;
             Disposition = typeOrInstance;
             SharedParamFileGroup = groupInSharedParamsFile;
-            ParameterGroup = paramGrp;
         }
 #else
         public ParamDefinition(
           string name,
           BindingGroups group,
           InstType typeOrInstance,
-          SharedParamGroup groupInSharedParamsFile,
-          BuiltInParameterGroup paramGrp)
+          SharedParamGroup groupInSharedParamsFile)
       {
           ParameterName = name;
           BindingGroup = group;
           Disposition = typeOrInstance;
           SharedParamFileGroup = groupInSharedParamsFile;
-          ParameterGroup = paramGrp;
       }
 #endif
 
