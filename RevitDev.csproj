@@ -169,6 +169,7 @@
     <Compile Include="EventInWindow\CanvasZoomPan.cs" />
     <Compile Include="EventInWindow\Press.cs" />
     <Compile Include="FamilyInRevits\FamilyInRevits.cs" />
+    <Compile Include="FilterElements\FilterElement.cs" />
     <Compile Include="Logger\SchemaInfo.cs" />
     <Compile Include="Logger\SchemaMethods.cs" />
     <Compile Include="MainCommand.cs" />
