@@ -182,6 +182,7 @@
     <Compile Include="ShareParameters\CategorySetManager.cs" />
     <Compile Include="ShareParameters\ParamDefinition.cs" />
     <Compile Include="ShareParameters\ShareParameterUtils.cs" />
+    <Compile Include="Solids\SolidUtils.cs" />
     <Compile Include="StringInWindow\TextFileMethods.cs" />
     <Compile Include="Utils\ElementInRevit.cs" />
     <Compile Include="Utils\SkipWarning.cs" />
