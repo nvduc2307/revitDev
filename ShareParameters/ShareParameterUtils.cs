@@ -12,35 +12,28 @@ namespace RevitDev.Utils.ShareParameters
         {
             try
             {
-                using (var ts = new Transaction(document, "Add Parameters To Project"))
+                string parametersFilename = application.SharedParametersFilename;
+                application.SharedParametersFilename = path;
+                Dictionary<SharedParamGroup, Definitions> groupDefinitions = GetSharedParamFileGroupDefinitions(application.OpenSharedParameterFile(), SharedParamGroup.General);
+                List<string> existingParams = new List<string>();
+                existingParams = new FilteredElementCollector(document)
+                    .OfClass(typeof(SharedParameterElement))
+                    .Select(x => x.Name)
+                    .Distinct()
+                    .ToList();
+
+                CategorySetManager setManager = new CategorySetManager(document);
+
+                foreach (var paramCreationData in paramCreationDataList)
                 {
-                    ts.Start();
-                    //--------
-                    string parametersFilename = application.SharedParametersFilename;
-                    application.SharedParametersFilename = path;
-                    Dictionary<SharedParamGroup, Definitions> groupDefinitions = GetSharedParamFileGroupDefinitions(application.OpenSharedParameterFile(), SharedParamGroup.General);
-                    List<string> existingParams = new List<string>();
-                    existingParams = new FilteredElementCollector(document)
-                        .OfClass(typeof(SharedParameterElement))
-                        .Select(x => x.Name)
-                        .Distinct()
-                        .ToList();
-
-                    CategorySetManager setManager = new CategorySetManager(document);
-
-                    foreach (var paramCreationData in paramCreationDataList)
-                    {
-                        paramCreationData.CreateParameter(document, existingParams, setManager, groupDefinitions);
-                    }
-
-                    application.SharedParametersFilename = parametersFilename;
-                    //--------
-                    ts.Commit();
+                    paramCreationData.CreateParameter(document, existingParams, setManager, groupDefinitions);
                 }
+
+                application.SharedParametersFilename = parametersFilename;
             }
             catch (Exception)
             {
-                IO.ShowWarning("khong thanh cong");
+                IO.ShowWarning("fail");
             }
         }
 

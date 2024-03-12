@@ -161,8 +161,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\Command1.cs" />
     <Compile Include="CurveInRevits\CurveInRevit.cs" />
     <Compile Include="CurveInRevits\LineStyleInRevit.cs" />
+    <Compile Include="Entities\SchemaField.cs" />
+    <Compile Include="Entities\SchemaInfo.cs" />
     <Compile Include="EventInReVit\OverrideGraphics.cs" />
     <Compile Include="EventInReVit\RevitCommandEndedMonitor.cs" />
     <Compile Include="EventInReVit\PatchDocument.cs" />
@@ -170,8 +173,6 @@
     <Compile Include="EventInWindow\Press.cs" />
     <Compile Include="FamilyInRevits\FamilyInRevits.cs" />
     <Compile Include="FilterElements\FilterElement.cs" />
-    <Compile Include="Logger\SchemaInfo.cs" />
-    <Compile Include="Logger\SchemaMethods.cs" />
     <Compile Include="MainCommand.cs" />
     <Compile Include="Messages\IO.cs" />
     <Compile Include="PathInWindows\PathInWindow.cs" />
@@ -179,10 +180,12 @@
     <Compile Include="RebarInRevits\Models\RevRebar.cs" />
     <Compile Include="RebarInRevits\Repositories\RevRebarRepository.cs" />
     <Compile Include="RebarInRevits\Utils\UtilsRevRebar.cs" />
-    <Compile Include="SelectionFilterInRevit\SelectionFilter.cs" />
+    <Compile Include="SelectionFilterInRevit\GenericSelectionFilter.cs" />
     <Compile Include="ShareParameters\CategorySetManager.cs" />
     <Compile Include="ShareParameters\ParamDefinition.cs" />
     <Compile Include="ShareParameters\ShareParameterUtils.cs" />
+    <Compile Include="SkipWarnings\SkipNotificationRevit.cs" />
+    <Compile Include="SkipWarnings\SkipWarning.cs" />
     <Compile Include="Solids\SolidUtils.cs" />
     <Compile Include="StringInWindow\TextFileMethods.cs" />
     <Compile Include="Utils\ElementInRevit.cs" />

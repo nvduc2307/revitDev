@@ -1,88 +1,40 @@
 ﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Structure;
 using System.Linq;
-using static HcBimUtils.WarmingUtils.FailureUtil;
 using FAMILY = Autodesk.Revit.DB.Family;
 
 namespace RevitDev.FamilyInRevits
 {
-    public class FamilyInRevits
+    public static class FamilyInRevits
     {
-        public string Path { get; set; }
-        public string Name { get; set; }
-        public FamilyInRevits(string path, string name)
+        public static FamilyInstance PushFamily(this Document doc, FamilySymbol symbol, XYZ basePoint)
         {
-            this.Path = path;
-            this.Name = name;
-        }
-        public FamilyInstance Push(Document doc, FamilySymbol symbol, XYZ basePoint)
-        {
-            FamilyInstance result = null;
-            using (Transaction ts = new Transaction(doc, "Push Family"))
-            {
-                var op = ts.GetFailureHandlingOptions();
-                var preproccessor = new DiscardAndResolveAllWarning();
-                op.SetFailuresPreprocessor(preproccessor);
-                ts.SetFailureHandlingOptions(op);
-                ts.Start();
-                symbol.Activate();
-                result = doc.Create.NewFamilyInstance(basePoint, symbol, StructuralType.NonStructural);
-                ts.Commit();
-            }
+            symbol.Activate();
+            var result = doc.Create.NewFamilyInstance(basePoint, symbol, StructuralType.NonStructural);
             return result;
         }
-        public FamilyInstance Push(Document doc, FamilySymbol symbol, XYZ basePoint, View view)
+        public static FamilyInstance PushFamily(this Document doc, FamilySymbol symbol, XYZ basePoint, View view)
         {
-            FamilyInstance result = null;
-            using (Transaction ts = new Transaction(doc, "Push Family"))
-            {
-                var op = ts.GetFailureHandlingOptions();
-                var preproccessor = new DiscardAndResolveAllWarning();
-                op.SetFailuresPreprocessor(preproccessor);
-                ts.SetFailureHandlingOptions(op);
-                ts.Start();
-                symbol.Activate();
-                result = doc.Create.NewFamilyInstance(basePoint, symbol, view);
-                ts.Commit();
-            }
+            symbol.Activate();
+            var result = doc.Create.NewFamilyInstance(basePoint, symbol, view);
             return result;
         }
-        public FamilyInstance Push(Document doc, FamilySymbol symbol, XYZ basePoint, double angle, View view)
+        public static FamilyInstance PushFamily(this Document doc, FamilySymbol symbol, XYZ basePoint, double angle, View view)
         {
-            FamilyInstance result = null;
-            using (Transaction ts = new Transaction(doc, "Push Family"))
-            {
-                var op = ts.GetFailureHandlingOptions();
-                var preproccessor = new DiscardAndResolveAllWarning();
-                op.SetFailuresPreprocessor(preproccessor);
-                ts.SetFailureHandlingOptions(op);
-                ts.Start();
-                symbol.Activate();
-                result = doc.Create.NewFamilyInstance(basePoint, symbol, view);
-                result.Location.Rotate(Line.CreateBound(basePoint, new XYZ(basePoint.X, basePoint.Y, basePoint.Z + 1)), angle);
-                ts.Commit();
-            }
+            symbol.Activate();
+            var result = doc.Create.NewFamilyInstance(basePoint, symbol, view);
+            result.Location.Rotate(Line.CreateBound(basePoint, new XYZ(basePoint.X, basePoint.Y, basePoint.Z + 1)), angle);
             return result;
         }
-        public FamilySymbol Load(Document document)
+        public static void LoadFamily(this Document document, string nameFamily, string dirFamily)
         {
-            var fileName = $"{Name}.rfa";
-            using (Transaction t = new Transaction(document, "Insert family"))
-            {
-                t.Start();
-                FAMILY family = null;
-                FilteredElementCollector a = new FilteredElementCollector(document).OfClass(typeof(FAMILY));
-                int n = a.Count<Element>(e => e.Name.Contains(fileName));
-                if (0 > n)
-                    document.LoadFamily(Path, out family);
-                t.Commit();
-            }
-            return new FilteredElementCollector(document)
-                .WhereElementIsElementType()
-                .OfClass(typeof(FamilySymbol))
-                .Where(x => x.Name.Contains(Name))
-                .Cast<FamilySymbol>()
-                .FirstOrDefault();
+            var fileName = $"{nameFamily}.rfa";
+            var path = $"{dirFamily}{fileName}";
+            FAMILY family = null;
+            var a = new FilteredElementCollector(document).OfClass(typeof(FAMILY));
+            int n = a.Count<Element>(e => e.Name.Contains(fileName));
+            if (0 > n)
+                document.LoadFamily(path, out family);
         }
     }
 }

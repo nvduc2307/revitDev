@@ -11,26 +11,23 @@ namespace RevitDev.RebarInRevits.Utils
 {
     public static class UtilsRevRebar
     {
-        public static void CreateRebarBaseOldRebar(this Rebar oldRebar, Document document, List<Curve> newCurves)
+        public static Rebar CreateRebarBaseOldRebar(this Rebar oldRebar, Document document, List<Curve> newCurves)
         {
-            XYZ rebarNormalNew = oldRebar.GetNormal();
-            var rebarStyle = oldRebar.GetRebarStyle();
-            var rebarType = oldRebar.GetRebarBarType();
-            RebarHookType startHookType = null;
-            RebarHookType endHookType = null;
-            var host = document.GetElement(oldRebar.GetHostId());
-            //var plane = Plane.CreateByThreePoints(newCurves[0].GetEndPoint(0), newCurves[0].GetEndPoint(1), newCurves[1].GetEndPoint(1));
-            if (oldRebar.IsRebarShapeDriven() == false && rebarNormalNew == null) throw new Exception("");
-            var vtNorm = oldRebar.IsRebarShapeDriven()
-                ? oldRebar.GetShapeDrivenAccessor().Normal
-                : rebarNormalNew;
-            var startHookOrien = oldRebar.GetHookOrientation(0);
-            var EndHookOrien = oldRebar.GetHookOrientation(1);
-            Rebar rebarNew = null;
-            using (var ts = new Transaction(document, "Create new rebar to flip"))
+            Rebar newRebar = null;
+            try
             {
-                ts.SkipOutSiteHost();
-                ts.Start();
+                XYZ rebarNormalNew = oldRebar.GetNormal();
+                var rebarStyle = oldRebar.GetRebarStyle();
+                var rebarType = oldRebar.GetRebarBarType();
+                RebarHookType startHookType = null;
+                RebarHookType endHookType = null;
+                var host = document.GetElement(oldRebar.GetHostId());
+                var vtNorm = oldRebar.IsRebarShapeDriven()
+                    ? oldRebar.GetShapeDrivenAccessor().Normal
+                    : rebarNormalNew;
+                var startHookOrien = oldRebar.GetHookOrientation(0);
+                var EndHookOrien = oldRebar.GetHookOrientation(1);
+                Rebar rebarNew = null;
                 rebarNew = Rebar.CreateFromCurves(
                     document,
                     rebarStyle,
@@ -46,8 +43,12 @@ namespace RevitDev.RebarInRevits.Utils
                     true);
                 rebarNew.SetSolidInView(document.ActiveView as View3D, true);
                 document.Delete(oldRebar.Id);
-                ts.Commit();
             }
+            catch (Exception)
+            {
+                newRebar = null;
+            }
+            return newRebar;
         }
 
         public static Rebar CopyRebar(this Rebar rebarBase, Document document, XYZ dir, double spacing)

@@ -23,13 +23,10 @@ namespace RevitDev.RebarInRevits.Repositories
         }
         public Rebar CreateRebar(List<Curve> polygon, BuiltInCategory builtInCategoryHost)
         {
-            var hostFakeColum = ElementInRevit.CreateHost(BuiltInCategory.OST_StructuralColumns); ;
             Rebar rebar = null;
-            using (var ts = new Transaction(_document, "name transaction"))
+            try
             {
-                ts.SkipOutSiteHost();
-                ts.Start();
-                //--------
+                var hostFakeColum = ElementInRevit.CreateHost(builtInCategoryHost);
                 rebar = Rebar.CreateFromCurves(
                     _document,
                     RevRebar.Style,
@@ -43,22 +40,20 @@ namespace RevitDev.RebarInRevits.Repositories
                     RevRebar.EndHookOrientation,
                     RevRebar.IsUseExistingShapeIfPosible,
                     RevRebar.IsCreateNewShape);
-                //--------
-                ts.Commit();
             }
-            if (rebar != null) rebar.SetRebarSolid(_document);
+            catch (System.Exception)
+            {
+                rebar = null;
+            }
             return rebar;
         }
 
-        public Rebar CreateRebarLayoutAsMaximumSpacing(List<Curve> polygon, double spacingFt, double lengthArrFt)
+        public Rebar CreateRebarLayoutAsMaximumSpacing(List<Curve> polygon, double spacingFt, double lengthArrFt, BuiltInCategory builtInCategoryHost)
         {
-            var hostFakeColum = ElementInRevit.CreateHost(BuiltInCategory.OST_StructuralColumns); ;
             Rebar rebar = null;
-            using (var ts = new Transaction(_document, "name transaction"))
+            try
             {
-                ts.SkipOutSiteHost();
-                ts.Start();
-                //--------
+                var hostFakeColum = ElementInRevit.CreateHost(builtInCategoryHost);
                 rebar = Rebar.CreateFromCurves(
                     _document,
                     RevRebar.Style,
@@ -74,22 +69,21 @@ namespace RevitDev.RebarInRevits.Repositories
                     RevRebar.IsCreateNewShape);
 
                 rebar.SetRebarLayoutAsMaximumSpacing(spacingFt, lengthArrFt, true, true, true);
-                //--------
-                ts.Commit();
             }
-            if (rebar != null) rebar.SetRebarSolid(_document);
+            catch (System.Exception)
+            {
+                rebar = null;
+            }
+
             return rebar;
         }
 
-        public Rebar CreateRebarLayoutAsFixedNumber(List<Curve> polygon, int qty, double lengthArrFt)
+        public Rebar CreateRebarLayoutAsFixedNumber(List<Curve> polygon, int qty, double lengthArrFt, BuiltInCategory builtInCategoryHost)
         {
-            var hostFakeColum = ElementInRevit.CreateHost(BuiltInCategory.OST_StructuralColumns); ;
             Rebar rebar = null;
-            using (var ts = new Transaction(_document, "name transaction"))
+            try
             {
-                ts.SkipOutSiteHost();
-                ts.Start();
-                //--------
+                var hostFakeColum = ElementInRevit.CreateHost(builtInCategoryHost);
                 rebar = Rebar.CreateFromCurves(
                     _document,
                     RevRebar.Style,
@@ -105,60 +99,68 @@ namespace RevitDev.RebarInRevits.Repositories
                     RevRebar.IsCreateNewShape);
 
                 rebar.SetRebarLayoutAsFixedNumber(qty, lengthArrFt, true, true, true);
-                //--------
-                ts.Commit();
             }
-            if (rebar != null) rebar.SetRebarSolid(_document);
+            catch (System.Exception)
+            {
+                rebar = null;
+            }
             return rebar;
         }
 
         public List<Rebar> CreateRebarTapper(List<Curve> polygon1, List<Curve> polygon2, double spacingFt, BuiltInCategory builtInCategoryHost)
         {
             var results = new List<Rebar>();
-            var points1 = polygon1.Select(x => x.GetEndPoint(0)).ToList();
-            var points2 = polygon2.Select(x => x.GetEndPoint(0)).ToList();
-
-            var condittion1 = polygon1.Count > 0 && polygon2.Count > 0 && polygon1.Count == polygon2.Count;
-
-
-            var lines = new List<Line>();
-            if (condittion1)
+            try
             {
+                var points1 = polygon1.Select(x => x.GetEndPoint(0)).ToList();
+                var points2 = polygon2.Select(x => x.GetEndPoint(0)).ToList();
 
-                //create list lines
-                var dem = 0;
-                points1.ForEach(point =>
+                var condittion1 = polygon1.Count > 0 && polygon2.Count > 0 && polygon1.Count == polygon2.Count;
+
+
+                var lines = new List<Line>();
+                if (condittion1)
                 {
-                    lines.Add(Line.CreateBound(point, points2[dem]));
-                    dem++;
-                });
 
-                //
-                if (lines.Count > 0)
-                {
-                    var maxLenght = lines.OrderBy(line => line.Length).Last().Length;
-                    var rebarQty = maxLenght.GetQtyRebar(spacingFt, out double phandu);
-                    var plgs = new List<List<XYZ>>();
-                    for (int i = 0; i < rebarQty + 1; i++)
+                    //create list lines
+                    var dem = 0;
+                    points1.ForEach(point =>
                     {
-                        var plg = new List<XYZ>();
-                        lines.ForEach(line => { 
-                            var p = line.GetEndPoint(0);
-                            var spacing = line.Length / rebarQty - 1;
-                            plg.Add(p + line.Direction * (spacing * i));
-                        });
-                        plgs.Add(plg);
-                    }
-
-                    plgs.ForEach(plg =>
-                    {
-                        var curves = plg.GetCurves();
-                        if (curves.Count > 0)
-                        {
-                            results.Add(CreateRebar(curves, builtInCategoryHost));
-                        }
+                        lines.Add(Line.CreateBound(point, points2[dem]));
+                        dem++;
                     });
+
+                    //
+                    if (lines.Count > 0)
+                    {
+                        var maxLenght = lines.OrderBy(line => line.Length).Last().Length;
+                        var rebarQty = maxLenght.GetQtyRebar(spacingFt, out double phandu);
+                        var plgs = new List<List<XYZ>>();
+                        for (int i = 0; i < rebarQty + 1; i++)
+                        {
+                            var plg = new List<XYZ>();
+                            lines.ForEach(line => { 
+                                var p = line.GetEndPoint(0);
+                                var spacing = line.Length / rebarQty - 1;
+                                plg.Add(p + line.Direction * (spacing * i));
+                            });
+                            plgs.Add(plg);
+                        }
+
+                        plgs.ForEach(plg =>
+                        {
+                            var curves = plg.GetCurves();
+                            if (curves.Count > 0)
+                            {
+                                results.Add(CreateRebar(curves, builtInCategoryHost));
+                            }
+                        });
+                    }
                 }
+            }
+            catch (System.Exception)
+            {
+                results = new List<Rebar>();
             }
             return results;
         }
